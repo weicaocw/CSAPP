@@ -1,0 +1,37 @@
+
+prog:	file format Mach-O 64-bit x86-64
+
+Disassembly of section __TEXT,__text:
+__text:
+100000f90:	55 	pushq	%rbp
+100000f91:	48 89 e5 	movq	%rsp, %rbp
+100000f94:	89 f8 	movl	%edi, %eax
+100000f96:	01 f0 	addl	%esi, %eax
+100000f98:	01 05 62 00 00 00 	addl	%eax, 98(%rip)
+100000f9e:	5d 	popq	%rbp
+100000f9f:	c3 	retq
+100000fa0:	55 	pushq	%rbp
+100000fa1:	48 89 e5 	movq	%rsp, %rbp
+100000fa4:	bf 01 00 00 00 	movl	$1, %edi
+100000fa9:	be 03 00 00 00 	movl	$3, %esi
+100000fae:	31 c0 	xorl	%eax, %eax
+100000fb0:	5d 	popq	%rbp
+100000fb1:	e9 da ff ff ff 	jmp	-38 <_sum>
+
+_sum:
+100000f90:	55 	pushq	%rbp
+100000f91:	48 89 e5 	movq	%rsp, %rbp
+100000f94:	89 f8 	movl	%edi, %eax
+100000f96:	01 f0 	addl	%esi, %eax
+100000f98:	01 05 62 00 00 00 	addl	%eax, 98(%rip)
+100000f9e:	5d 	popq	%rbp
+100000f9f:	c3 	retq
+
+_main:
+100000fa0:	55 	pushq	%rbp
+100000fa1:	48 89 e5 	movq	%rsp, %rbp
+100000fa4:	bf 01 00 00 00 	movl	$1, %edi
+100000fa9:	be 03 00 00 00 	movl	$3, %esi
+100000fae:	31 c0 	xorl	%eax, %eax
+100000fb0:	5d 	popq	%rbp
+100000fb1:	e9 da ff ff ff 	jmp	-38 <_sum>

@@ -1,0 +1,65 @@
+9.1 pass: simple caculation
+
+9.2 2^n/page_size
+
+9.3  
+P = 2^p
+n-p = size of vpn
+m-p = size of ppn
+n = 64, m = 32
+
+9.4 有趣的练习
+开局一个VA地址：
+0x03d7 
+A. VA:
+00 0011 1101 0111
+
+B. Address translation
+VPN? 需要拆解VA，需要看给的setup 图解
+VPO 6位（page size 64 bits）， VPN 就是14-6 = 8 
+VPN            VPO
+00001111    010111
+
+VPN to TLBI + TLBT 
+记住： TLB是方便VPN -> PPN 的， 取一小截，称为index，与tag组合， 当然可能VPN miss
+TLB: The TLB is 4-way set associative with 16 total entries.  说明index2位就够了，2 lower bits of VPN
+TLBI : 11  => 03
+TLBT: 00 0011 => 03 
+Hit + Page Hit ! PPN: 0D
+00 1101 
+
+Cache 用来做什么的？ memory 数据的cache
+PPN: 001101 PPO: 010111
+ 拆解PA: 
+ CT + CI + CO
+ 001101 0101 11
+ CI: 5
+ CT: 还是0D
+ CO： 3: 1D
+
+ 9.5 mmapcopy.c
+ 
+ 9.6 
+ 2 + 1 -> 8 bytes -> 1000 | 1 = 0x0000 0009
+ 9 + 1 -> 16 bytes -> 0001 0000 | 1 = 0x0000 0011
+ 15 + 1 -> 16 bytes -> 0001 0000 | 1 = 0x0000 0011
+ 20 + 1 -> 24 bytes -> 0001 1000 | 1 = 0x0000 0019
+
+ 9.7
+ 1. 4 + 4 + 4 = 12
+ 2. 4 + 4   = 8
+ 3. 4 + 4 + 8  = 16
+ 4. 4 + 4 = 8
+ see answer: right!!
+
+9.10
+size: 32
+allocate 17: 
+15->15->15->15->...
+答案：不是这个意思：
+在多个size classes 都有分配和释放，空间越来越多。
+之前的size classes得不到利用。
+
+
+
+
