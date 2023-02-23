@@ -1,0 +1,48 @@
+name: pr_check
+
+on:
+  pull_request:
+
+env:
+  GOPRIVATE: github.com/ymatrix-data
+  GONOPROXY: github.com/ymatrix-data
+
+jobs:
+  check_changes:
+    runs-on: ubuntu-20.04
+    steps:
+      # https://github.com/marketplace/actions/pull-request-title-rules?
+      - uses: dbhao/action-pr-title@master
+        id: wipcheck
+        with:
+          disallowed_prefixes: 'wip,rfc,do-not-merge,skipci,skip-ci,skip_ci,ciskip,ci-skip,ci_skip' # title should not start with the given prefix
+          prefix_case_sensitive: false # title prefix are case insensitive
+      - name: cancel_wip
+        if: steps.wipcheck.outputs.matched == 'true'
+        uses: andymckay/cancel-action@0.2
+
+  build_and_test:
+    needs: [ check_changes ]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Granting private modules access
+        run: |
+          git config --global url."https://${{secrets.CI_USER}}:${{secrets.PAT}}@github.com/ymatrix-data".insteadOf "https://github.com/ymatrix-data"
+
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+
+      - name: Unit
+        run: make unit
+
+      - name: Build
+        run: make
