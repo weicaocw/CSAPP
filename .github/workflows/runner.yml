@@ -82,7 +82,7 @@ jobs:
 
           export SFR_ID=$(terragrunt output -raw fleet_request)
           echo "SFR_ID=$SFR_ID" >> $GITHUB_ENV
-          ./scripts/wait_for_sfr_instances_running.sh "$SFR_ID"
+          ../scripts/wait_for_sfr_instances_running.sh "$SFR_ID"
           echo "Cluster is up."
 
       - name: Terraform Destroy
