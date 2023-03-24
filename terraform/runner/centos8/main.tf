@@ -16,13 +16,13 @@ provider "aws" {
 }
 
 module "ec2_spot_cluster" {
-  source = "./aws"
+  source = "../aws"
 
   cluster_id       = var.cluster_id
   gh_token         = var.gh_token
   github_endpoint  = var.github_endpoint
   ami_id           = var.ami_id // ci-soa-github-runner
-  ami_default_user = "ubuntu"
+  ami_default_user = "centos"
   instance_type    = "t3a.small"
   cluster_size     = var.cluster_size
 }

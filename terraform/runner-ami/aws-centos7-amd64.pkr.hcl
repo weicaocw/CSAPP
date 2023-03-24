@@ -8,7 +8,7 @@ packer {
 }
 
 source "amazon-ebs" "runner" {
-  ami_name      = "matrixdb-pr-runner-amd64-${var.ami_version}"
+  ami_name      = "matrixdb-pr-runner-centos7-amd64-${var.ami_version}"
   instance_type = "t3a.small"
   region        = "cn-northwest-1"
   source_ami_filter {
@@ -20,11 +20,11 @@ source "amazon-ebs" "runner" {
     most_recent = true
     owners      = ["837727238323"]
   }
-  ssh_username = "ubuntu"
+  ssh_username = "ec2-user"
 }
 
 build {
-  name    = "matrixdb-pr-runner"
+  name    = "matrixdb-pr-runner-centos7"
   sources = [
     "source.amazon-ebs.runner"
   ]

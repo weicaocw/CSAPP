@@ -22,7 +22,7 @@ remote_state {
   }
   config = {
     bucket         = "matrixdb-ci-terraform-state"
-    key            = "ci-runners/${local.cluster_id}/terraform.tfstate"
+    key            = "ci-runners/ubuntu20/${local.cluster_id}/terraform.tfstate"
     region         = "cn-northwest-1"
     encrypt        = true
     dynamodb_table = "matrixdb-ci-terraform-state-lock"
