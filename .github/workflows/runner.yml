@@ -21,10 +21,6 @@ on:
         required: false
         type: boolean
 
-    push:
-    branches:
-     - 'test-pr'
-     
 env:
   tf_version: 1.0.11
   tg_version: 0.35.13
