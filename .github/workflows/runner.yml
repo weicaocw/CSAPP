@@ -1,0 +1,94 @@
+name: DeployRunners
+
+on:
+  workflow_dispatch:
+    inputs:
+      cluster_id:
+        description: "cluster ID to identify the deployed cluster"
+        required: true
+        default: matrixdb-pr-spot-fleet-amd64
+      fleet_size:
+        description: "number of runner instances"
+        required: true
+        default: '16'
+      ami_id:
+        description: "AMI to run instances"
+        required: true
+        default: ami-0c35338d407abf49d
+
+      destroy:
+        description: "destroy the cluster"
+        required: false
+        type: boolean
+
+env:
+  tf_version: 1.0.11
+  tg_version: 0.35.13
+  tf_working_dir: terraform/runner
+  AWS_DEFAULT_REGION: cn-northwest-1
+
+jobs:
+
+  deploy_fleet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mxbox
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.tf_version }}
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: ${{ env.tg_version }}
+
+      - name: Prepare variables
+        run: |
+          echo "TF_VAR_pat=${{secrets.PAT}}" > $GITHUB_ENV
+          echo "TF_VAR_github_endpoint=${{ github.server_url }}/${{ github.repository }}" | tee -a $GITHUB_ENV
+          echo "TF_VAR_fleet_size=${{ github.event.inputs.fleet_size }}" | tee -a $GITHUB_ENV
+          echo "TF_VAR_ami_id=${{ github.event.inputs.ami_id }}" | tee -a $GITHUB_ENV
+          echo "TF_VAR_cluster_id"=${{ github.event.inputs.cluster_id }} | tee -a $GITHUB_ENV
+
+      - name: Use terragrunt to create cluster
+        if: ${{ github.event.inputs.destroy == 'false' }}
+        working-directory: ${{ env.tf_working_dir }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          set -x
+          terragrunt init
+          terragrunt init -migrate-state
+          terragrunt validate
+          terragrunt plan
+          terragrunt apply -auto-approve
+
+      - name: Wait for the cluster to be ready
+        if: ${{ github.event.inputs.destroy == 'false' }}
+        working-directory: ${{ env.tf_working_dir }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "Waiting for cluster to be ready ..."
+
+          export SFR_ID=$(terragrunt output -raw fleet_request)
+          echo "SFR_ID=$SFR_ID" >> $GITHUB_ENV
+          ./scripts/wait_for_sfr_instances_running.sh "$SFR_ID"
+          echo "Cluster is up."
+
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.destroy == 'true' }}
+        working-directory: ${{ env.tf_working_dir }}
+        timeout-minutes: 60
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          terragrunt init -migrate-state
+          terragrunt destroy -auto-approve -no-color

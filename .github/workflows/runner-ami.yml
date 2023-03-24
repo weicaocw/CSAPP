@@ -1,0 +1,45 @@
+name: BuildRunnerAMI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  packer:
+    runs-on: ubuntu-20.04
+    name: packer
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: cn-northwest-1
+      PKR_VAR_github_config_pat: ${{ secrets.PAT }}
+      PKR_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      PKR_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      - name: output date time as version
+        id: output-version
+        run: |
+          echo "version=$(date -u +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: "latest"
+
+      - name: Run `packer build`
+        id: build
+        uses: nick-fields/retry@v2
+        env:
+          PKR_VAR_ami_version: ${{ steps.output-version.outputs.version }}
+        with:
+          timeout_minutes: 60
+          max_attempts: 5
+          command: |
+            packer init "terraform/runner-ami/aws-ubuntu-amd64.pkr.hcl"
+            packer validate "terraform/runner-ami/aws-ubuntu-amd64.pkr.hcl"
+            packer build "terraform/runner-ami/aws-ubuntu-amd64.pkr.hcl"
