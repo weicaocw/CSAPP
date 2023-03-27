@@ -31,9 +31,6 @@ build {
   provisioner "shell" {
     inline = [
       "echo Installing required components",
-      "export LIBUV_VERSION=1.39.0",
-      "export XERCES_C_VERSION=3.1.2",
-      "export UVW_VERSION=2.7.0_libuv_v1.39",
       "sudo dnf -y --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos && dnf -y distro-sync && dnf -y install epel-release && dnf -y install 'dnf-command(config-manager)' && dnf config-manager --set-enabled powertools && dnf config-manager --set-enabled epel && dnf -y update",
       "sudo dnf -y install unzip autoconf autoconf-archive bison cmake3 flex libtool make which patchelf git rsync bc",
       "sudo dnf -y install apr-devel bzip2-devel expat-devel libcurl-devel libevent-devel libuuid-devel libxml2-devel libyaml-devel libzstd-devel openldap-devel openssl-devel pam-devel readline-devel snappy-devel libicu perl-ExtUtils-Embed perl-Env perl-JSON",
@@ -47,13 +44,13 @@ build {
       "sudo touch /opt/gcc_env.sh",
       "sudo curl -L \"https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose",
       "sudo dnf -y remove libpq && dnf -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm && dnf -qy module disable postgresql && dnf -y install postgresql12-devel",
-      "sudo mkdir -p /tmp/build-libuv && cd /tmp/build-libuv && curl -# --location --output libuv-${LIBUV_VERSION}.tar.gz https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz && tar xf libuv-${LIBUV_VERSION}.tar.gz && cd libuv-${LIBUV_VERSION} && cmake -B build -D CMAKE_BUILD_TYPE=Release && make -C build -j4 install && rm -rf /tmp/build-libuv",
-      "sudo mkdir -p /tmp/build-uvw && cd /tmp/build-uvw && curl -# --location --output uvw-${UVW_VERSION}.tar.gz https://github.com/skypjack/uvw/archive/refs/tags/v${UVW_VERSION}.tar.gz && tar xf uvw-${UVW_VERSION}.tar.gz && cd uvw-${UVW_VERSION} && cmake -B build && make -C build install && rm -rf /tmp/build-uvw",
+      "LIBUV_VERSION=1.39.0 && sudo mkdir -p /tmp/build-libuv && cd /tmp/build-libuv && curl -# --location --output libuv-${LIBUV_VERSION}.tar.gz https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz && tar xf libuv-${LIBUV_VERSION}.tar.gz && cd libuv-${LIBUV_VERSION} && cmake -B build -D CMAKE_BUILD_TYPE=Release && make -C build -j4 install && rm -rf /tmp/build-libuv",
+      "UVW_VERSION=2.7.0_libuv_v1.39 &&sudo mkdir -p /tmp/build-uvw && cd /tmp/build-uvw && curl -# --location --output uvw-${UVW_VERSION}.tar.gz https://github.com/skypjack/uvw/archive/refs/tags/v${UVW_VERSION}.tar.gz && tar xf uvw-${UVW_VERSION}.tar.gz && cd uvw-${UVW_VERSION} && cmake -B build && make -C build install && rm -rf /tmp/build-uvw",
       "sudo curl -# --location --output /usr/include/libdivide.h https://raw.githubusercontent.com/ridiculousfish/libdivide/master/libdivide.h",
       "sudo curl -# --location --output /usr/include/pdqsort.h https://raw.githubusercontent.com/orlp/pdqsort/master/pdqsort.h",
-      "sudo echo \"743bd0a029bf8de56a587c270d97031e0099fe2b7142cef03e0da16e282655a0  xerces-c-3.1.2.tar.gz\" > /tmp/xerces-c-${XERCES_C_VERSION}.tar.gz.sha256",
-      "sudo mkdir -p /tmp/build-xerces-c && cd /tmp/build-xerces-c && curl -# --location --output xerces-c-${XERCES_C_VERSION}.tar.gz http://archive.apache.org/dist/xerces/c/3/sources/xerces-c-${XERCES_C_VERSION}.tar.gz && cp /tmp/xerces-c-${XERCES_C_VERSION}.tar.gz.sha256 . && sha256sum -c xerces-c-${XERCES_C_VERSION}.tar.gz.sha256 && tar xf xerces-c-${XERCES_C_VERSION}.tar.gz && cd xerces-c-${XERCES_C_VERSION} && ./configure && make -j4 && make install && cp /usr/local/lib/libxerces-c* /lib64 && cd /lib64 && ln -sf libxerces-c-3.1.so libxerces-c.so && ldconfig && cd /tmp/build-xerces-c && rm -rf /tmp/build-xerces-c",
-      "sudo rm -f /tmp/xerces-c-${XERCES_C_VERSION}.tar.gz.sha256",
+      "XERCES_C_VERSION=3.1.2 && sudo echo \"743bd0a029bf8de56a587c270d97031e0099fe2b7142cef03e0da16e282655a0  xerces-c-3.1.2.tar.gz\" > /tmp/xerces-c-${XERCES_C_VERSION}.tar.gz.sha256",
+      "XERCES_C_VERSION=3.1.2 && sudo mkdir -p /tmp/build-xerces-c && cd /tmp/build-xerces-c && curl -# --location --output xerces-c-${XERCES_C_VERSION}.tar.gz http://archive.apache.org/dist/xerces/c/3/sources/xerces-c-${XERCES_C_VERSION}.tar.gz && cp /tmp/xerces-c-${XERCES_C_VERSION}.tar.gz.sha256 . && sha256sum -c xerces-c-${XERCES_C_VERSION}.tar.gz.sha256 && tar xf xerces-c-${XERCES_C_VERSION}.tar.gz && cd xerces-c-${XERCES_C_VERSION} && ./configure && make -j4 && make install && cp /usr/local/lib/libxerces-c* /lib64 && cd /lib64 && ln -sf libxerces-c-3.1.so libxerces-c.so && ldconfig && cd /tmp/build-xerces-c && rm -rf /tmp/build-xerces-c",
+      "XERCES_C_VERSION=3.1.2 && sudo rm -f /tmp/xerces-c-${XERCES_C_VERSION}.tar.gz.sha256",
 
       "sudo apt-get install -y gcc upx-ucl unzip python3-pip awscli jq make s3cmd",
       "git config --global url.\"https://${var.github_config_pat}@github.com/ymatrix-data\".insteadOf \"https://github.com/ymatrix-data\"",
