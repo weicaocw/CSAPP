@@ -97,10 +97,6 @@ resource "aws_spot_fleet_request" "fleet_request" {
         echo "StrictHostKeyChecking no" >> ~/.ssh/config
         chmod 600 ~/.ssh/config
 
-        sudo /usr/local/bin/sslocal -c /etc/shadowsocks.json -d start
-        go env -w GOPRIVATE="github.com/ymatrix-data"
-        touch ~/.ack-ginkgo-rc
-
         mkdir ~/runner
         tar zxf actions-runner.tar.gz -C runner
 
