@@ -8,7 +8,7 @@ packer {
 }
 
 source "amazon-ebs" "runner" {
-  ami_name      = "matrixdb-pr-runner-ubuntu-amd64-${var.ami_version}"
+  ami_name      = "matrixdb-pr-runner-ubuntu20-amd64-${var.ami_version}"
   instance_type = "t3a.small"
   region        = "cn-northwest-1"
   source_ami_filter {

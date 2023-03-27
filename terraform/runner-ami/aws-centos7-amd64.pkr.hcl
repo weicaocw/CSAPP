@@ -13,12 +13,12 @@ source "amazon-ebs" "runner" {
   region        = "cn-northwest-1"
   source_ami_filter {
     filters = {
-      name                = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+      name                = "CentOS7.9-"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
     most_recent = true
-    owners      = ["837727238323"]
+    owners      = ["336777782633"]
   }
   ssh_username = "ec2-user"
 }
@@ -59,7 +59,7 @@ build {
       "sudo mkdir -p /tmp/build-xerces-c && cd /tmp/build-xerces-c && curl -# --location     --output xerces-c-${XERCES_C_VERSION}.tar.gz     http://archive.apache.org/dist/xerces/c/3/sources/xerces-c-${XERCES_C_VERSION}.tar.gz && cp /tmp/xerces-c-${XERCES_C_VERSION}.tar.gz.sha256 . && sha256sum -c xerces-c-${XERCES_C_VERSION}.tar.gz.sha256 && tar xf xerces-c-${XERCES_C_VERSION}.tar.gz && cd xerces-c-${XERCES_C_VERSION} && ./configure && make -j4 && make install && rm -rf /tmp/build-xerces-c",
       "sudo rm -f /tmp/xerces-c-${XERCES_C_VERSION}.tar.gz.sha256",
       "sudo ssh-keygen -A",
-      "sudo exec /usr/sbin/sshd -D -e "$@" &",
+      "sudo exec /usr/sbin/sshd -D -e \"$@\" &",
 
       "sudo yum install -y upx-ucl awscli jq s3cmd",
       "git config --global url.\"https://${var.github_config_pat}@github.com/ymatrix-data\".insteadOf \"https://github.com/ymatrix-data\"",

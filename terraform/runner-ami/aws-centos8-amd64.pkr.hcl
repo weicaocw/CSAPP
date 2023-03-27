@@ -13,12 +13,12 @@ source "amazon-ebs" "runner" {
   region        = "cn-northwest-1"
   source_ami_filter {
     filters = {
-      name                = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+      name                = "CentOS-8.2"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
     most_recent = true
-    owners      = ["837727238323"]
+    owners      = ["336777782633"]
   }
   ssh_username = "centos"
 }
