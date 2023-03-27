@@ -13,7 +13,7 @@ source "amazon-ebs" "runner" {
   region        = "cn-northwest-1"
   source_ami_filter {
     filters = {
-      name                = "CentOS-8.2"
+      name                = "CentOS-8.2*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
