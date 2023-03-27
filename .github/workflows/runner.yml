@@ -84,6 +84,14 @@ jobs:
           ../scripts/wait_for_sfr_instances_running.sh "$SFR_ID"
           echo "Cluster is up."
 
+      - name: Prepare SSH key and client
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
+        run: |
+          terragrunt output -raw -no-color private_key | tee "$WORK_DIR"/cluster_key
+
       - name: Terraform Destroy
         if: ${{ github.event.inputs.destroy == 'true' }}
         working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
