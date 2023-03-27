@@ -90,7 +90,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
         run: |
-          terragrunt output -raw -no-color private_key | tee "$WORK_DIR"/cluster_key
+          terragrunt output -raw -no-color private_key
 
       - name: Terraform Destroy
         if: ${{ github.event.inputs.destroy == 'true' }}
