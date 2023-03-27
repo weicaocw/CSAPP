@@ -57,6 +57,7 @@ build {
 
 
       "echo Prepare for dev",
+      "sudo apt-get install -y gh"
       "aws s3 cp s3://public-packer-artifacts/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner-linux-x64-2.302.1.tar.gz",
       "ln -s ~/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner.tar.gz",
     ]
