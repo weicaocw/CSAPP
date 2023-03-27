@@ -69,6 +69,8 @@ build {
       "export AWS_DEFAULT_REGION=\"cn-northwest-1\"",
 
       "echo Prepare for dev",
+      "sudo yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo",
+      "sudo yum install -y gh",
       "aws s3 cp s3://public-packer-artifacts/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner-linux-x64-2.302.1.tar.gz",
       "ln -s ~/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner.tar.gz",
     ]

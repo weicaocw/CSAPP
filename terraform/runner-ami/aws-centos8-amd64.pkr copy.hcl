@@ -63,6 +63,9 @@ build {
       "export AWS_DEFAULT_REGION=\"cn-northwest-1\"",
 
       "echo Prepare for dev",
+      "sudo dnf install 'dnf-command(config-manager)'",
+      "sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo",
+      "sudo dnf install -y gh",
       "aws s3 cp s3://public-packer-artifacts/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner-linux-x64-2.302.1.tar.gz",
       "ln -s ~/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner.tar.gz",
     ]
