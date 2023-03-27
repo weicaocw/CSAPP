@@ -9,7 +9,6 @@ variable "resource_prefix" {
 
 variable "ami_id" {
   type    = string
-  default = "ami-04422ce5081d0f609" // ci-soa-github-runner
 }
 
 variable "ami_default_user" {
@@ -41,6 +40,10 @@ variable "gh_token" {
 }
 
 variable "github_endpoint" {
+  type = string
+}
+
+variable "platfrom" {
   type = string
 }
 

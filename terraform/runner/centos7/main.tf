@@ -24,5 +24,6 @@ module "ec2_spot_cluster" {
   ami_id           = var.ami_id // ci-soa-github-runner
   ami_default_user = "ec2-user"
   instance_type    = "t3a.small"
+  platform         = "centos7"
   cluster_size     = var.cluster_size
 }
