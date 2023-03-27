@@ -57,7 +57,11 @@ build {
 
 
       "echo Prepare for dev",
-      "sudo apt-get install -y gh",
+      "curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg",
+      "sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg",
+      "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main\" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null",
+      "sudo apt update",
+      "sudo apt install -y gh",
       "aws s3 cp s3://public-packer-artifacts/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner-linux-x64-2.302.1.tar.gz",
       "ln -s ~/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner.tar.gz",
     ]
