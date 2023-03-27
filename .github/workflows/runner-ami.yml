@@ -2,6 +2,10 @@ name: BuildRunnerAMI
 
 on:
   workflow_dispatch:
+      platform:
+        description: "platform of the runner"
+        required: true
+        default: ubuntu20
 
 jobs:
   packer:
@@ -40,6 +44,6 @@ jobs:
           timeout_minutes: 60
           max_attempts: 5
           command: |
-            packer init "terraform/runner-ami/aws-ubuntu-amd64.pkr.hcl"
-            packer validate "terraform/runner-ami/aws-ubuntu-amd64.pkr.hcl"
-            packer build "terraform/runner-ami/aws-ubuntu-amd64.pkr.hcl"
+            packer init "terraform/runner-ami/aws-${{ inputs.platform }}-amd64.pkr.hcl"
+            packer validate "terraform/runner-ami/aws-${{ inputs.platform }}-amd64.pkr.hcl"
+            packer build "terraform/runner-ami/aws-${{ inputs.platform }}-amd64.pkr.hcl"

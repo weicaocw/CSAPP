@@ -107,7 +107,7 @@ resource "aws_spot_fleet_request" "fleet_request" {
         export GH_TOKEN=${var.gh_token}
         export TOKEN=\$(gh api --method POST \
           -H "Accept: application/vnd.github+json" \
-          /repos/ymatrix-data/matrixdb/actions/runners/registration-token | jq -r ".token")
+          /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
 
         cd runner
         ./config.sh --url ${var.github_endpoint} \

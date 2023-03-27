@@ -19,7 +19,6 @@ on:
         description: "platform of the runner"
         required: true
         default: ubuntu20
-
       destroy:
         description: "destroy the cluster"
         required: false
