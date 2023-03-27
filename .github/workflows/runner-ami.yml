@@ -2,6 +2,7 @@ name: BuildRunnerAMI
 
 on:
   workflow_dispatch:
+    inputs:
       platform:
         description: "platform of the runner"
         required: true
