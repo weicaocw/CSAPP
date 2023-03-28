@@ -20,7 +20,7 @@ source "amazon-ebs" "runner" {
     most_recent = true
     owners      = ["188586444900"]
   }
-  ssh_username = "ec2-user"
+  ssh_username = "centos"
 }
 
 build {
