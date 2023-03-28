@@ -40,7 +40,7 @@ build {
       "sudo yum -y install postgresql-devel",
       "sudo yum -y install rpmdevtools",
       "sudo yum -y install openssh-server net-tools",
-      "sudo yum -y install https://apache.jfrog.io/artifactory/arrow/centos/7/apache-arrow-release-latest.rpm && yum -y install arrow-glib-devel-3.0.0 parquet-devel-3.0.0 gcc gcc-c++",
+      // "sudo yum -y install https://apache.jfrog.io/artifactory/arrow/centos/7/apache-arrow-release-latest.rpm && yum -y install arrow-glib-devel-3.0.0 parquet-devel-3.0.0 gcc gcc-c++",
       "sudo pip3 --no-cache-dir install pysocks && pip3 --no-cache-dir install argparse psutil pygresql pyyaml",
       "sudo yum -y install centos-release-scl centos-release-scl-rh && yum -y install --nogpgcheck devtoolset-11-gcc devtoolset-11-gcc-c++ && pip3 --no-cache-dir install psi && ln -s /usr/bin/cmake3 /usr/bin/cmake && echo -e 'source /opt/rh/devtoolset-11/enable' >> /opt/gcc_env.sh && echo -e 'source /opt/gcc_env.sh' >> /root/.bashrc",
       "sudo yum -y install docker-compose",
