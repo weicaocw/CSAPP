@@ -13,14 +13,14 @@ source "amazon-ebs" "runner" {
   region        = "cn-northwest-1"
   source_ami_filter {
     filters = {
-      name                = " CentOS-7-9-1210-updated"
+      name                = "matrixdb-test-centos7*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
     most_recent = true
-    owners      = ["188586444900"]
+    owners      = ["121995761632"]
   }
-  ssh_username = "centos"
+  ssh_username = "ec2-user"
 }
 
 build {
