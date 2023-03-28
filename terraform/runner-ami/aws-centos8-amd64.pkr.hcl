@@ -13,12 +13,12 @@ source "amazon-ebs" "runner" {
   region        = "cn-northwest-1"
   source_ami_filter {
     filters = {
-      name                = "CentOS-8.2*"
+      name                = "matrixdb-test-clean-centos8-*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
     most_recent = true
-    owners      = ["336777782633"]
+    owners      = ["121995761632"]
   }
   ssh_username = "centos"
 }
