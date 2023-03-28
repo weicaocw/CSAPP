@@ -43,7 +43,7 @@ jobs:
           PKR_VAR_ami_version: ${{ steps.output-version.outputs.version }}
         with:
           timeout_minutes: 60
-          max_attempts: 5
+          max_attempts: 1
           command: |
             packer init "terraform/runner-ami/aws-${{ inputs.platform }}-amd64.pkr.hcl"
             packer validate "terraform/runner-ami/aws-${{ inputs.platform }}-amd64.pkr.hcl"
