@@ -13,12 +13,12 @@ source "amazon-ebs" "runner" {
   region        = "cn-northwest-1"
   source_ami_filter {
     filters = {
-      name                = "CentOS7.9-*"
+      name                = " CentOS-7-9-1210-updated"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
     most_recent = true
-    owners      = ["336777782633"]
+    owners      = ["188586444900"]
   }
   ssh_username = "ec2-user"
 }
