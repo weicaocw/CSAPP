@@ -31,7 +31,7 @@ build {
   provisioner "shell" {
     inline = [
       "echo Installing required components",
-      "sudo dnf -y --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos && dnf -y distro-sync && dnf -y install epel-release && dnf -y install 'dnf-command(config-manager)' && dnf config-manager --set-enabled powertools && dnf config-manager --set-enabled epel && dnf -y update",
+      "sudo dnf -y --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos && sudo dnf -y distro-sync && sudo dnf -y install epel-release && sudo dnf -y install 'dnf-command(config-manager)' && sudo dnf config-manager --set-enabled powertools && sudo dnf config-manager --set-enabled epel && sudo dnf -y update",
       "sudo dnf -y install unzip autoconf autoconf-archive bison cmake3 flex libtool make which patchelf git rsync bc",
       "sudo dnf -y install apr-devel bzip2-devel expat-devel libcurl-devel libevent-devel libuuid-devel libxml2-devel libyaml-devel libzstd-devel openldap-devel openssl-devel pam-devel readline-devel snappy-devel libicu perl-ExtUtils-Embed perl-Env perl-JSON",
       "sudo dnf -y install xxhash-devel",
@@ -43,7 +43,7 @@ build {
       "sudo pip3 --no-cache-dir install pysocks && pip3 --no-cache-dir install argparse psutil pygresql pyyaml",
       "sudo touch /opt/gcc_env.sh",
       "sudo curl -L \"https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose",
-      "sudo dnf -y remove libpq && dnf -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm && dnf -qy module disable postgresql && dnf -y install postgresql12-devel",
+      "sudo dnf -y remove libpq && sudo dnf -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm && sudo dnf -qy module disable postgresql && sudo dnf -y install postgresql12-devel",
       "sudo mkdir -p /tmp/build-libuv && cd /tmp/build-libuv && curl -# --location --output libuv-1.39.0.tar.gz https://github.com/libuv/libuv/archive/v1.39.0.tar.gz && tar xf libuv-1.39.0.tar.gz && cd libuv-1.39.0 && cmake -B build -D CMAKE_BUILD_TYPE=Release && make -C build -j4 install && rm -rf /tmp/build-libuv",
       "sudo mkdir -p /tmp/build-uvw && cd /tmp/build-uvw && curl -# --location --output uvw-2.7.0_libuv_v1.39.tar.gz https://github.com/skypjack/uvw/archive/refs/tags/v2.7.0_libuv_v1.39.tar.gz && tar xf uvw-2.7.0_libuv_v1.39.tar.gz && cd uvw-2.7.0_libuv_v1.39 && cmake -B build && make -C build install && rm -rf /tmp/build-uvw",
       "sudo curl -# --location --output /usr/include/libdivide.h https://raw.githubusercontent.com/ridiculousfish/libdivide/master/libdivide.h",
