@@ -93,6 +93,7 @@ resource "aws_spot_fleet_request" "fleet_request" {
       user_data = <<-EOF
         #!/bin/bash
         sudo -i -u ${var.ami_default_user} bash <<EOS
+        echo "test from caowei" > text.txt
         mkdir -p ~/.ssh
         echo "StrictHostKeyChecking no" >> ~/.ssh/config
         chmod 600 ~/.ssh/config
