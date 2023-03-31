@@ -106,6 +106,9 @@ resource "aws_spot_fleet_request" "fleet_request" {
           -H "Accept: application/vnd.github+json" \
           /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
 
+        echo "token done" >> text.txt
+        echo $GH_TOKEN >> text.txt
+        echo $TOKEN >> text.txt
         cd runner
         ./config.sh --url ${var.github_endpoint} \
           --token \$TOKEN \
