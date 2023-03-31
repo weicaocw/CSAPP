@@ -90,9 +90,9 @@ resource "aws_spot_fleet_request" "fleet_request" {
         delete_on_termination = true
       }
 
-      user_dataw = <<-EOF
+      user_data = <<-EOF
         #!/bin/bash
-        sudo -i -u ${var.ami_dfault_user} bash <<EOS
+        sudo -i -u ${var.ami_default_user} bash <<EOS
         mkdir -p ~/.ssh
         echo "StrictHostKeyChecking no" >> ~/.ssh/config
         chmod 600 ~/.ssh/config
