@@ -109,7 +109,7 @@ resource "aws_spot_fleet_request" "fleet_request" {
         ./config.sh --url ${var.github_endpoint} \
           --token \$TOKEN \
           --disableupdate \
-          --label ${var.platfrom}
+          --label ${var.platform}
           --unattended > ~/config.log 2>&1
         nohup ./run.sh > ~/runner.log 2>&1
         EOS

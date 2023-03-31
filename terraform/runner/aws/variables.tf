@@ -43,7 +43,7 @@ variable "github_endpoint" {
   type = string
 }
 
-variable "platfrom" {
+variable "platform" {
   type = string
 }
 
