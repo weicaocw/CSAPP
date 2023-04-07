@@ -17,7 +17,6 @@ on:
         description: "AMI to run instances"
         required: true
         default: ami-0c35338d407abf49d
-
       platform:
         description: "platform of the runner"
         required: true
