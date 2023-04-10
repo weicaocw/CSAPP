@@ -109,11 +109,13 @@ resource "aws_spot_fleet_request" "fleet_request" {
           /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
 
         echo "token done" >> text.txt
-        echo $GH_TOKEN >> text.txt
+        echo \$GH_TOKEN >> text.txt
         echo ${var.gh_token} >> text.txt
         echo ${var.ami_default_user} >> text.txt
         echo ${var.platform} >> text.txt
-        echo $TOKEN >> text.txt
+        echo \$TOKEN >> text.txt
+        echo "export TOKEN=${TOKEN}" >> ~/.bashrc
+        source ~/.bashrc
         cd runner
         ./config.sh --url ${var.github_endpoint} \
           --token \$TOKEN \
