@@ -104,9 +104,7 @@ resource "aws_spot_fleet_request" "fleet_request" {
         export GH_TOKEN=${var.gh_token}
         echo "export GH_TOKEN=${var.gh_token}" >> ~/.bashrc
         source ~/.bashrc
-        export TOKEN=\$(gh api --method POST \
-          -H "Accept: application/vnd.github+json" \
-          /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
+        export TOKEN=$(gh api --method POST -H "Accept: application/vnd.github+json" /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
 
         echo "token done" >> text.txt
         echo $GH_TOKEN >> text.txt

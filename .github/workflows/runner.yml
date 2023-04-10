@@ -54,9 +54,9 @@ jobs:
         run: |
           echo "TF_VAR_pat=${{secrets.PAT}}" | tee -a $GITHUB_ENV
           echo $TF_VAR_pat
-          # if $TF_VAR_pat is empty, set it to "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"
+          # if $TF_VAR_pat is empty, set it to "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"
           if [ -z "$TF_VAR_pat" ]; then
-            echo "TF_VAR_pat=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" | tee -a $GITHUB_ENV
+            echo "TF_VAR_pat=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" | tee -a $GITHUB_ENV
             echo "$TF_VAR_pat"
             echo "problem!!!"
           fi
