@@ -53,13 +53,6 @@ jobs:
       - name: Prepare variables
         run: |
           echo "TF_VAR_pat=${{secrets.PAT}}" > $GITHUB_ENV
-          echo $TF_VAR_pat
-          # if $TF_VAR_pat is empty, set it to "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"
-          if [ -z "$TF_VAR_pat" ]; then
-            echo "TF_VAR_pat=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" | tee -a $GITHUB_ENV
-            echo "$TF_VAR_pat"
-            echo "problem!!!"
-          fi
           echo "TF_VAR_github_endpoint=${{ github.server_url }}/${{ github.repository }}" | tee -a $GITHUB_ENV
           echo "TF_VAR_fleet_size=${{ github.event.inputs.fleet_size }}" | tee -a $GITHUB_ENV
           echo "TF_VAR_ami_id=${{ github.event.inputs.ami_id }}" | tee -a $GITHUB_ENV
