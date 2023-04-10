@@ -108,6 +108,9 @@ resource "aws_spot_fleet_request" "fleet_request" {
 
         echo "token done" >> text.txt
         echo $GH_TOKEN >> text.txt
+        echo ${var.gh_token} >> text.txt
+        echo ${var.ami_default_user} >> text.txt
+        echo ${var.platform} >> text.txt
         echo $TOKEN >> text.txt
         cd runner
         ./config.sh --url ${var.github_endpoint} \
