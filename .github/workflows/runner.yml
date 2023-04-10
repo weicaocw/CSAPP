@@ -56,7 +56,7 @@ jobs:
           echo $TF_VAR_pat
           # if $TF_VAR_pat is empty, set it to "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"
           if [ -z "$TF_VAR_pat" ]; then
-            echo "TF_VAR_pat=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" >> $GITHUB_ENV
+            echo "TF_VAR_pat=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" | tee -a $GITHUB_ENV
             echo "problem!!!"
           fi
           echo "TF_VAR_github_endpoint=${{ github.server_url }}/${{ github.repository }}" | tee -a $GITHUB_ENV
