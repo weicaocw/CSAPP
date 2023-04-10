@@ -1,13 +1,19 @@
 name: pr_check
 
 on:
-  pull_request:
+  workflow_dispatch:
+    
 
 jobs:
   build_and_test:
-    runs-on: ubuntu-20.04
+    runs-on: [self-hosted]
+    container:
+      image: matrixdb/centos7_build:latest
+      options: --privileged
     steps:
       - name: mkdir test-pr-CSAPP
         run: |
           pwd
           mkdir test-pr-CSAPP
+          ls
+
