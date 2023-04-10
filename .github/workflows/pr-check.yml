@@ -7,9 +7,6 @@ on:
 jobs:
   build_and_test:
     runs-on: [self-hosted]
-    container:
-      image: matrixdb/centos7_build:latest
-      options: --privileged
     steps:
       - name: mkdir test-pr-CSAPP
         run: |
