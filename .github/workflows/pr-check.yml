@@ -12,9 +12,9 @@ jobs:
         run: |
           pwd
           ls
-          whoami
-          sudo service docker start
-          sudo usermod -aG docker ubuntu
+          whoami         
+          sudo groupadd docker && \
+          sudo usermod -aG docker "$(whoami)" && \
           newgrp docker
-          sudo docker container ls
+          docker run hello-world
 
