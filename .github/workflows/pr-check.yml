@@ -14,4 +14,7 @@ jobs:
           ls
           whoami
           docker container ls
+          sudo service docker start
+          sudo usermod -aG docker ubuntu
+          newgrp docker
 
