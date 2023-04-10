@@ -13,8 +13,8 @@ jobs:
           pwd
           ls
           whoami         
-          sudo groupadd docker && \
           sudo usermod -aG docker "$(whoami)" && \
           newgrp docker
+          docker run --help
           docker run hello-world
 
