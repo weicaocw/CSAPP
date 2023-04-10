@@ -11,7 +11,6 @@ jobs:
       - name: mkdir test-pr-CSAPP
         run: |
           pwd
-          mkdir test-pr-CSAPP
           ls
           whoami
           docker container ls
