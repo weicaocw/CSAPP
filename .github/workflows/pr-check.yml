@@ -13,4 +13,6 @@ jobs:
           pwd
           mkdir test-pr-CSAPP
           ls
+          whoami
+          docker container ls
 
