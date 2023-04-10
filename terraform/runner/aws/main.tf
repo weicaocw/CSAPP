@@ -102,6 +102,8 @@ resource "aws_spot_fleet_request" "fleet_request" {
         tar zxf actions-runner.tar.gz -C runner
 
         export GH_TOKEN=${var.gh_token}
+        echo ${var.gh_token} >> ~/.bashrc
+        source ~/.bashrc
         export TOKEN=\$(gh api --method POST \
           -H "Accept: application/vnd.github+json" \
           /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
