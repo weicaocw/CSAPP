@@ -7,14 +7,11 @@ on:
 jobs:
   build_and_test:
     runs-on: [self-hosted]
+    container: ubuntu:latest
     steps:
       - name: mkdir test-pr-CSAPP
         run: |
           pwd
           ls
           whoami         
-          sudo usermod -aG docker "$(whoami)" && \
-          newgrp docker
-          docker run --help
-          docker run hello-world
 
