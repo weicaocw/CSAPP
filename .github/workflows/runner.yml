@@ -112,6 +112,7 @@ jobs:
             public_ip=$(echo $instance | cut -f 2)
             echo "Instance PUBLIC IP: $public_ip"
           done
+          export GH_TOKEN=${{ secrets.PAT }}
           export TOKEN=$(gh api --method POST -H "Accept: application/vnd.github+json" /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
           echo $TOKEN
 
