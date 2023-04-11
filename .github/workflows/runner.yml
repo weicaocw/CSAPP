@@ -108,8 +108,11 @@ jobs:
           readarray -t instances <<< $CLUSTER_IPS
           # echo each item in instances
           for instance in "${instances[@]}"; do
-            echo "Instance IP: $instance"
+            public_ip=$(echo $instance | cut -f 2)
+            echo "Instance IP: $public_ip"
           done
+          export TOKEN=$(gh api --method POST -H "Accept: application/vnd.github+json" /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
+          echo $TOKEN
 
       - name: Terraform Destroy
         if: ${{ github.event.inputs.destroy == 'true' }}
