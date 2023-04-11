@@ -102,7 +102,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
         run: |
-          sudo apt install jq gh -y
           export SFR_ID=$(terragrunt output -raw fleet_request)
           CLUSTER_IPS=$(../scripts/get_sfr_instance_ips.sh $SFR_ID)
           readarray -t instances <<< $CLUSTER_IPS
