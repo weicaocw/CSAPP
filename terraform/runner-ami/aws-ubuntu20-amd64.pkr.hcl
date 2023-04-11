@@ -57,7 +57,7 @@ build {
 
 
       "echo Prepare for dev",
-      "sudo apt-get remove -y docker docker-engine docker.io containerd runc",
+      // "sudo apt-get remove -y docker docker-engine docker.io containerd runc",
       "sudo apt-get update",
       "sudo apt-get install -y ca-certificates curl gnupg",
       "sudo mkdir -m 0755 -p /etc/apt/keyrings",
