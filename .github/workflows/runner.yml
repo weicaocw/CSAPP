@@ -108,9 +108,9 @@ jobs:
           # echo each item in instances
           echo "${instances[0]}"
           echo $(echo "${instances[0]}" | cut -f 2)
-          for instance in "${instances[@]}"; do
-            echo "Instance: $instance"
-            public_ip=$(echo $instance | cut -f 2)
+          for num in "${!instances[@]}"; do
+            echo "Instance: "${instances[$num]}"
+            public_ip=$(echo ${instances[$num]} | cut -f 2)
             echo "Instance PUBLIC IP: $public_ip"
           done
           export GH_TOKEN=${{ secrets.PAT }}
