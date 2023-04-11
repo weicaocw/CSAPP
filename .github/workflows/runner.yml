@@ -104,7 +104,7 @@ jobs:
         run: |
           sudo apt install jq gh -y
           export SFR_ID=$(terragrunt output -raw fleet_request)
-          CLUSTER_IPS=$(scripts/get_sfr_instance_ips.sh $SFR_ID)
+          CLUSTER_IPS=$(../scripts/get_sfr_instance_ips.sh $SFR_ID)
           readarray -t instances <<< $CLUSTER_IPS
           # echo each item in instances
           for instance in "${instances[@]}"; do
@@ -124,7 +124,7 @@ jobs:
         run: |
           terragrunt init -migrate-state
           export SFR_ID=$(terragrunt output -raw fleet_request)
-          CLUSTER_IPS=$(scripts/get_sfr_instance_ips.sh $SFR_ID)
+          CLUSTER_IPS=$(../scripts/get_sfr_instance_ips.sh $SFR_ID)
           readarray -t instances <<< $CLUSTER_IPS
           terragrunt output -raw -no-color private_key > runner.pem
           chmod 400 runner.pem
