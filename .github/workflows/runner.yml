@@ -106,6 +106,7 @@ jobs:
           CLUSTER_IPS=$(../scripts/get_sfr_instance_ips.sh $SFR_ID)
           readarray -t instances <<< $CLUSTER_IPS
           # echo each item in instances
+          $(echo "${instances[0]}" | cut -f 2)
           for instance in "${instances[@]}"; do
             echo "Instance: $instance"
             public_ip=$(echo $instance | cut -f 2)
