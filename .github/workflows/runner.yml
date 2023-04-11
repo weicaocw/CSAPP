@@ -96,6 +96,21 @@ jobs:
         run: |
           terragrunt output -raw -no-color private_key
 
+      - name: Get IPs of the instances
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
+        run: |
+          sudo apt install jq gh -y
+          export SFR_ID=$(terragrunt output -raw fleet_request)
+          CLUSTER_IPS=$(scripts/get_sfr_instance_ips.sh $SFR_ID)
+          readarray -t instances <<< $CLUSTER_IPS
+          # echo each item in instances
+          for instance in "${instances[@]}"; do
+            echo "Instance IP: $instance"
+          done
+
       - name: Terraform Destroy
         if: ${{ github.event.inputs.destroy == 'true' }}
         working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
@@ -105,4 +120,17 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           terragrunt init -migrate-state
+          export SFR_ID=$(terragrunt output -raw fleet_request)
+          CLUSTER_IPS=$(scripts/get_sfr_instance_ips.sh $SFR_ID)
+          readarray -t instances <<< $CLUSTER_IPS
+          terragrunt output -raw -no-color private_key > runner.pem
+          chmod 400 runner.pem
+          export TOKEN=$(gh api --method POST -H "Accept: application/vnd.github+json" /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
+          # for each item in instances, run the foll
+          for instance in "${instances[@]}"; do
+            public_ip=$(echo $instance | cut -f 2)
+            # log into public_ip and cd to runner ,and run ./config.sh
+            ssh -o StrictHostKeyChecking=no -i runner.pem ubuntu@$public_ip "cd runner && ./config.sh remove --TOKEN $TOKEN"
+          done
+
           terragrunt destroy -auto-approve -no-color
