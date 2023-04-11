@@ -108,8 +108,9 @@ jobs:
           readarray -t instances <<< $CLUSTER_IPS
           # echo each item in instances
           for instance in "${instances[@]}"; do
+            echo "Instance: $instance"
             public_ip=$(echo $instance | cut -f 2)
-            echo "Instance IP: $public_ip"
+            echo "Instance PUBLIC IP: $public_ip"
           done
           export TOKEN=$(gh api --method POST -H "Accept: application/vnd.github+json" /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
           echo $TOKEN
@@ -128,6 +129,7 @@ jobs:
           readarray -t instances <<< $CLUSTER_IPS
           terragrunt output -raw -no-color private_key > runner.pem
           chmod 400 runner.pem
+          export GH_TOKEN=${{ secrets.PAT }}
           export TOKEN=$(gh api --method POST -H "Accept: application/vnd.github+json" /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
           # for each item in instances, run the foll
           for instance in "${instances[@]}"; do
