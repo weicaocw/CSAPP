@@ -14,6 +14,7 @@ on:
       ami_id:
         # 01e8d238084ed2d6a centos7
         # 05eb0cf8df36f72fe ubuntu20
+        # 0100ed960ec0e57b0 ubuntu20 with docker
         description: "AMI to run instances"
         required: true
         default: ami-0c35338d407abf49d
