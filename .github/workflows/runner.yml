@@ -108,6 +108,8 @@ jobs:
           # echo each item in instances
           for num in "${!instances[@]}"; do
             echo "Instance: ${instances[$num]}"
+            public_ip=$(echo ${instances[0]} | cut -f 2)
+            echo "Instance PUBLIC IP0: $public_ip"
             public_ip=$(echo ${instances[$num]} | cut -f 2)
             echo "Instance PUBLIC IP: $public_ip"
           done
