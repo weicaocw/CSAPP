@@ -52,7 +52,7 @@ build {
       "sudo mkdir -p /tmp/build-xerces-c && sudo cd /tmp/build-xerces-c && sudo curl -# --location --output xerces-c-3.1.2.tar.gz http://archive.apache.org/dist/xerces/c/3/sources/xerces-c-3.1.2.tar.gz && sudo cp /tmp/xerces-c-3.1.2.tar.gz.sha256 . && sudo sha256sum -c xerces-c-3.1.2.tar.gz.sha256 && sudo tar xf xerces-c-3.1.2.tar.gz && sudo cd xerces-c-3.1.2 && sudo ./configure && sudo make -j4 && sudo make install && sudo cp /usr/local/lib/libxerces-c* /lib64 && sudo cd /lib64 && sudo ln -sf libxerces-c-3.1.so libxerces-c.so && sudo ldconfig && sudo cd /tmp/build-xerces-c && sudo rm -rf /tmp/build-xerces-c",
       "sudo rm -f /tmp/xerces-c-3.1.2.tar.gz.sha256",
 
-      "sudo apt-get install -y gcc upx-ucl unzip python3-pip awscli jq make s3cmd",
+      "sudo dnf install -y gcc upx-ucl unzip python3-pip awscli jq make s3cmd",
       "git config --global url.\"https://${var.github_config_pat}@github.com/ymatrix-data\".insteadOf \"https://github.com/ymatrix-data\"",
       "sudo git config --global url.\"https://${var.github_config_pat}@github.com/ymatrix-data\".insteadOf \"https://github.com/ymatrix-data\"",
       "export AWS_ACCESS_KEY_ID=\"${var.aws_access_key_id}\"",
