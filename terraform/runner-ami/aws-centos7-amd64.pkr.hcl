@@ -1,0 +1,95 @@
+packer {
+  required_plugins {
+    amazon = {
+      version = ">= 0.0.2"
+      source  = "github.com/hashicorp/amazon"
+    }
+  }
+}
+
+source "amazon-ebs" "runner" {
+  ami_name      = "matrixdb-pr-runner-centos7-amd64-${var.ami_version}"
+  instance_type = "t3a.small"
+  region        = "cn-northwest-1"
+  source_ami_filter {
+    filters = {
+      name                = "CentOS-7.9*"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    most_recent = true
+    owners      = ["121995761632"]
+  }
+  ssh_username = "centos"
+}
+
+build {
+  name    = "matrixdb-pr-runner-centos7"
+  sources = [
+    "source.amazon-ebs.runner"
+  ]
+  provisioner "shell" {
+    inline = [
+      "echo Installing required components",
+      "sudo yum makecache",
+      "sudo rpm --import http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-7 && sudo yum -y install epel-release && sudo yum -y install unzip autoconf autoconf-archive bison cmake3 flex libtool make which patchelf systemd-rpm-macros",
+      "sudo yum -y install apr-devel bzip2-devel expat-devel libcurl-devel libevent-devel libuuid-devel libxml2-devel libyaml-devel libzstd-devel openldap-devel openssl-devel pam-devel readline-devel snappy-devel libicu perl-ExtUtils-Embed perl-Env perl-JSON ",
+      "sudo yum -y install xxhash-devel",
+      "sudo yum install -y http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm && sudo yum install -y git",
+      "sudo yum -y install lz4-devel mysql-devel python3-devel python3-pip",
+      "sudo yum -y install postgresql-devel",
+      "sudo yum -y install rpmdevtools",
+      "sudo yum -y install openssh-server net-tools",
+      // "sudo yum -y install https://apache.jfrog.io/artifactory/arrow/centos/7/apache-arrow-release-latest.rpm && sudo yum -y install arrow-glib-devel-3.0.0 parquet-devel-3.0.0 gcc gcc-c++",
+      // "pip3 --no-cache-dir install pysocks && sudo pip3 --no-cache-dir install argparse psutil pygresql pyyaml",
+      "sudo yum -y install centos-release-scl centos-release-scl-rh && sudo yum -y install --nogpgcheck devtoolset-11-gcc devtoolset-11-gcc-c++ && sudo pip3 --no-cache-dir install psi && sudo ln -s /usr/bin/cmake3 /usr/bin/cmake && sudo echo -e 'source /opt/rh/devtoolset-11/enable' >> /opt/gcc_env.sh && sudo echo -e 'source /opt/gcc_env.sh' >> /root/.bashrc",
+      "sudo yum -y install docker-compose",
+      "sudo yum -y install rh-postgresql12-postgresql-devel",
+      "sudo yum -y install rust cargo rust-std-static",
+      "sudo yum -y install --nogpgcheck llvm-toolset-7.0-clang && sudo echo -e 'source /opt/rh/llvm-toolset-7.0/enable' >> /opt/clang_env.sh && sudo echo -e 'source /opt/clang_env.sh' >> /root/.bashrc",
+      "sudo yum clean all",
+      "sudo mkdir -p /tmp/build-libuv && sudo cd /tmp/build-libuv && sudo curl -# --location     --output libuv-1.39.0.tar.gz     https://github.com/libuv/libuv/archive/v1.39.0.tar.gz && sudo tar xf libuv-1.39.0.tar.gz && sudo cd libuv-1.39.0 && sudo cmake -B build -D CMAKE_BUILD_TYPE=Release && sudo make -C build -j4 install && sudo rm -rf /tmp/build-libuv",
+      "sudo mkdir -p /tmp/build-uvw && sudo cd /tmp/build-uvw && sudo curl -# --location     --output uvw-2.7.0_libuv_v1.39.tar.gz     https://github.com/skypjack/uvw/archive/refs/tags/v2.7.0_libuv_v1.39.tar.gz && sudo tar xf uvw-2.7.0_libuv_v1.39.tar.gz && sudo cd uvw-2.7.0_libuv_v1.39 && sudo cmake -B build && sudo make -C build install && sudo rm -rf /tmp/build-uvw",
+      "sudo curl -# --location --output /usr/include/libdivide.h https://raw.githubusercontent.com/ridiculousfish/libdivide/master/libdivide.h",
+      "sudo curl -# --location --output /usr/include/pdqsort.h https://raw.githubusercontent.com/orlp/pdqsort/master/pdqsort.h",
+      "sudo echo \"743bd0a029bf8de56a587c270d97031e0099fe2b7142cef03e0da16e282655a0  xerces-c-3.1.2.tar.gz\" > /tmp/xerces-c-3.1.2.tar.gz.sha256",
+      "sudo mkdir -p /tmp/build-xerces-c && sudo cd /tmp/build-xerces-c && sudo curl -# --location     --output xerces-c-3.1.2.tar.gz     http://archive.apache.org/dist/xerces/c/3/sources/xerces-c-3.1.2.tar.gz && sudo cp /tmp/xerces-c-3.1.2.tar.gz.sha256 . && sudo sha256sum -c xerces-c-3.1.2.tar.gz.sha256 && sudo tar xf xerces-c-3.1.2.tar.gz && sudo cd xerces-c-3.1.2 && sudo ./configure && sudo make -j4 && sudo make install && sudo rm -rf /tmp/build-xerces-c",
+      "sudo rm -f /tmp/xerces-c-3.1.2.tar.gz.sha256",
+      "sudo ssh-keygen -A",
+      "sudo exec /usr/sbin/sshd -D -e \"$@\" &",
+
+      "sudo yum install -y upx-ucl awscli jq s3cmd",
+      "git config --global url.\"https://${var.github_config_pat}@github.com/ymatrix-data\".insteadOf \"https://github.com/ymatrix-data\"",
+      "sudo git config --global url.\"https://${var.github_config_pat}@github.com/ymatrix-data\".insteadOf \"https://github.com/ymatrix-data\"",
+      "export AWS_ACCESS_KEY_ID=\"${var.aws_access_key_id}\"",
+      "export AWS_SECRET_ACCESS_KEY=\"${var.aws_secret_access_key}\"",
+      "export AWS_DEFAULT_REGION=\"cn-northwest-1\"",
+
+      "echo Prepare for dev",
+      "sudo yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo",
+      "sudo yum install -y gh",
+      "aws s3 cp s3://public-packer-artifacts/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner-linux-x64-2.302.1.tar.gz",
+      "ln -s ~/actions-runner-linux-x64-2.302.1.tar.gz ~/actions-runner.tar.gz",
+    ]
+  }
+}
+
+variable "github_config_pat" {
+  // export PKR_VAR_github_config_pat=...
+  type    = string
+}
+
+variable "aws_access_key_id" {
+  // export PKR_VAR_aws_access_key_id=...
+  type    = string
+}
+
+variable "aws_secret_access_key" {
+  // export PKR_VAR_aws_secret_access_key=...
+  type    = string
+}
+
+variable "ami_version" {
+  // export PKR_VAR_ami_version=...
+  type    = string
+}

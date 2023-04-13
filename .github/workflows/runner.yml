@@ -1,0 +1,141 @@
+name: DeployRunners
+
+on:
+  workflow_dispatch:
+    inputs:
+      cluster_id:
+        description: "cluster ID to identify the deployed cluster"
+        required: true
+        default: matrixdb-pr-spot-fleet-amd64
+      fleet_size:
+        description: "number of runner instances"
+        required: true
+        default: "1"
+      ami_id:
+        # 01e8d238084ed2d6a centos7
+        # 05eb0cf8df36f72fe ubuntu20
+        # 0100ed960ec0e57b0 ubuntu20 with docker
+        # 070c7e0ba9e286c5e ubuntu20 with docker auto built
+        description: "AMI to run instances"
+        required: true
+        default: ami-0c35338d407abf49d
+      platform:
+        description: "platform of the runner"
+        required: true
+        default: ubuntu20
+      destroy:
+        description: "destroy the cluster"
+        required: false
+        type: boolean
+
+env:
+  tf_version: 1.0.11
+  tg_version: 0.35.13
+  tf_working_dir: terraform/runner
+  AWS_DEFAULT_REGION: cn-northwest-1
+
+jobs:
+  deploy_fleet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mxbox
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.tf_version }}
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: ${{ env.tg_version }}
+
+      - name: Prepare variables
+        run: |
+          echo "TF_VAR_pat=${{secrets.PAT}}" > $GITHUB_ENV
+          echo "TF_VAR_github_endpoint=${{ github.server_url }}/${{ github.repository }}" | tee -a $GITHUB_ENV
+          echo "TF_VAR_fleet_size=${{ github.event.inputs.fleet_size }}" | tee -a $GITHUB_ENV
+          echo "TF_VAR_ami_id=${{ github.event.inputs.ami_id }}" | tee -a $GITHUB_ENV
+          echo "TF_VAR_cluster_id"=${{ github.event.inputs.cluster_id }} | tee -a $GITHUB_ENV
+
+      - name: Use terragrunt to create cluster
+        if: ${{ github.event.inputs.destroy == 'false' }}
+        working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          set -x
+          terragrunt init
+          terragrunt init -migrate-state
+          terragrunt validate
+          terragrunt plan
+          terragrunt apply -auto-approve
+
+      - name: Wait for the cluster to be ready
+        if: ${{ github.event.inputs.destroy == 'false' }}
+        working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "Waiting for cluster to be ready ..."
+
+          export SFR_ID=$(terragrunt output -raw fleet_request)
+          echo "SFR_ID=$SFR_ID" >> $GITHUB_ENV
+          ../scripts/wait_for_sfr_instances_running.sh "$SFR_ID"
+          echo "Cluster is up."
+
+      - name: Prepare SSH key and client
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
+        run: |
+          terragrunt output -raw -no-color private_key
+
+      - name: Get IPs of the instances
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
+        run: |
+          export SFR_ID=$(terragrunt output -raw fleet_request)
+          CLUSTER_IPS=$(../scripts/get_sfr_instance_ips.sh $SFR_ID)
+          readarray -t instances <<< $CLUSTER_IPS
+          # echo each item in instances
+          for num in "${!instances[@]}"; do
+            echo "Instance: ${instances[$num]}"
+            public_ip=$(echo "${instances[$num]}" | cut -f 2)
+            echo "Instance PUBLIC IP: $public_ip"
+          done
+          export GH_TOKEN=${{ secrets.PAT }}
+          export TOKEN=$(gh api --method POST -H "Accept: application/vnd.github+json" /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
+          echo $TOKEN
+
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.destroy == 'true' }}
+        working-directory: ${{ env.tf_working_dir }}/${{ inputs.platform }}
+        timeout-minutes: 60
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          terragrunt init -migrate-state
+          export SFR_ID=$(terragrunt output -raw fleet_request)
+          CLUSTER_IPS=$(../scripts/get_sfr_instance_ips.sh $SFR_ID)
+          readarray -t instances <<< $CLUSTER_IPS
+          terragrunt output -raw -no-color private_key > runner.pem
+          chmod 400 runner.pem
+          export GH_TOKEN=${{ secrets.PAT }}
+          export TOKEN=$(gh api --method POST -H "Accept: application/vnd.github+json" /repos/weicao92/CSAPP/actions/runners/registration-token | jq -r ".token")
+          # for each item in instances, run the foll
+          for instance in "${instances[@]}"; do
+            public_ip=$(echo "${instance}" | cut -f 2)
+            # log into public_ip and cd to runner ,and run ./config.sh
+            ssh -o StrictHostKeyChecking=no -i runner.pem ubuntu@$public_ip "cd runner && ./config.sh remove --TOKEN $TOKEN"
+          done
+
+          terragrunt destroy -auto-approve -no-color
